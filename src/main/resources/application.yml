@@ -3,8 +3,25 @@ server:
 eureka:
   instance:
     hostname: localhost
+    # 修改显示的微服务名为：IP:端口
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    # ip-address: 192.168.6.66 # 只有prefer-ip-address=true时才会生效(覆盖默认ip)
+    # 设置微服务调用地址为IP优先(缺省为false 即调用形式为http://service-id:port/serice)
+    prefer-ip-address: true
+    # 表示eureka server至上一次收到client的心跳之后，等待下一次心跳的超时时间，在这个时间内若没收到下一次心跳，则将移除该instance
+    lease-expiration-duration-in-seconds: 30 # 默认90秒
+    # 示eureka client发送心跳给server端的频率，如果在leaseExpirationDurationInSeconds后，server端没有收到client的心跳，则将摘除该instance
+    lease-renewal-interval-in-seconds: 10 # 默认30秒
   client:
+    # 实例是否在eureka服务器上注册自己的信息以供其他服务发现，默认为true.由于当前这个应用就是eureka server，故而设为false
     register-with-eureka: false
+    # 此客户端是否获取eureka服务器注册表上的注册信息，默认为true.因为这是一个单点的eureka server，不需要同步其他的eureka server节点的数据，故而设为false。
     fetch-registry: false
     service-url: 
+       # 设置与Eureka Server交互的地址，查询服务和注册服务都需要依赖这个地址.默认是http://localhost:8761/eureka. 多个地址可使用 ,分隔
        defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    # eureka server是否开启保护模式，默认true
+    enable-self-preservation: true
+    # eureka server清理无效节点的时间间隔，默认60000毫秒，即60秒
+    eviction-interval-timer-in-ms: 45000
