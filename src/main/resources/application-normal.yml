@@ -1,16 +1,18 @@
 server:
   port: 8091
+spring:
+  profiles: normal
 eureka:
   instance:
     hostname: localhost
-    # 修改显示的微服务名为：IP:端口
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    # 修改此实例注册到eureka服务端的微服务名为：IP:端口
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
     # ip-address: 192.168.6.66 # 只有prefer-ip-address=true时才会生效(覆盖默认ip)
-    # 设置微服务调用地址为IP优先(缺省为false 即调用形式为http://service-id:port/serice)
-    prefer-ip-address: true
+    # 设置该实例的微服务调用地址为IP优先(缺省为false 即调用形式为http://service-id:port/serice)
+    prefer-ip-address: false
     # 表示eureka server至上一次收到client的心跳之后，等待下一次心跳的超时时间，在这个时间内若没收到下一次心跳，则将移除该instance
     lease-expiration-duration-in-seconds: 30 # 默认90秒
-    # 示eureka client发送心跳给server端的频率，如果在leaseExpirationDurationInSeconds后，server端没有收到client的心跳，则将摘除该instance
+    # 表示eureka client发送心跳给server端的频率，如果在leaseExpirationDurationInSeconds后，server端没有收到client的心跳，则将摘除该instance
     lease-renewal-interval-in-seconds: 10 # 默认30秒
   client:
     # 实例是否在eureka服务器上注册自己的信息以供其他服务发现，默认为true.由于当前这个应用就是eureka server，故而设为false
