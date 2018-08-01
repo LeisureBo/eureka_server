@@ -1,18 +1,22 @@
 server:
   port: 8761
-spring:
-  profiles: peer2
 eureka:
   instance:
-    hostname: peer2 # 设置该实例的主机地址
-    instance-id: ${spring.cloud.client.ip-address}:${server.port} # 修改该实例的微服务名为：IP:端口
-    lease-renewal-interval-in-seconds: 10 # 该实例的发送心跳到eureka服务端的间隔时间
+    hostname: test_eureka_server2 # 设置该实例的主机名
+    prefer-ip-address: true # 向eureka server注册时是否优先使用IP地址而不是主机名
+    instance-id: ${spring.cloud.client.ip-address}:${server.port} # 设置该实例唯一标识为：IP:端口
+    lease-renewal-interval-in-seconds: 10 # 设置该实例发送心跳到eureka服务端的间隔时间
     lease-expiration-duration-in-seconds: 30 # 指示eureka服务端等待该实例下一次心跳的超时时间
   client:
-    # 向其它eureka服务器上注册自己的信息
-    register-with-eureka: false
-    # 获取其它eureka服务器注册表上的注册信息
+    # 是否在eureka服务器上注册自己的信息以供其他服务发现
+    register-with-eureka: true
+    # 是否获取eureka服务器注册表上的注册信息(对于eureka server集群该配置无意义)
     fetch-registry: false
-    service-url: 
-       # 设置其它eureka server节点的地址
-       defaultZone: http://peer1:8091/eureka/
+    service-url:
+       # 设置eureka server节点的地址
+       defaultZone: http://127.0.0.1:8091/eureka/
+  server:
+    # eureka server是否开启保护模式，默认true
+    enable-self-preservation: true
+    # eureka server清理无效节点的时间间隔，默认60000毫秒，即60秒
+    eviction-interval-timer-in-ms: 10000
