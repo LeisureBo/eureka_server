@@ -13,8 +13,10 @@ eureka:
     # 设置该实例向eureka server注册时优先使用ip地址而不是{eureka.instance.hostname}，并且访问此实例将优先使用ip地址
     prefer-ip-address: true # 默认false；设置true：如果{eureka.instance.ip-address}没有设置则取${spring.cloud.client.ip-address}
     # 表示eureka server至上一次收到client的心跳之后，等待下一次心跳的超时时间，在这个时间内若没收到下一次心跳，则将移除该instance
+    # 注：eureka server默认不会启用该配置，需要配置好eureka server扫描失效时间，才会启用eureka server的主动失效机制
     lease-expiration-duration-in-seconds: 30 # 默认90秒
     # 表示eureka client发送心跳给server端的频率，如果在leaseExpirationDurationInSeconds后，server端没有收到client的心跳，则将摘除该instance
+    # 注：在默认没有启用eureka server主动失效服务实例的情况下，服务过期是利用ReadWriteMap超时缓存失效实现的，只有发送心跳的实例缓存才不会失效.
     lease-renewal-interval-in-seconds: 10 # 默认30秒
   client:
     # 实例是否在eureka服务器上注册自己的信息以供其他服务发现，默认为true.由于当前这个应用就是eureka server，不需要将注册信息注册到自己，故而设为false
@@ -32,5 +34,7 @@ eureka:
     # eureka server是否开启保护模式，默认true
     # 意义：无论什么情况，服务端不会主动注销任何微服务。避免因client与server的网络问题导致eureka server没有收到实例心跳而注销微服务。
     enable-self-preservation: true
-    # eureka server清理无效服务的时间间隔，默认60000毫秒，即60秒
-    eviction-interval-timer-in-ms: 45000
+    # 启用主动失效(清理无效服务)并且设置每次主动失效检测时间间隔。默认0，即不启用
+    eviction-interval-timer-in-ms: 30000
+    # eureka server刷新readCacheMap的时间，默认0。注意：client读取的是readCacheMap，这个时间决定了多久会把readWriteCacheMap的缓存更新到readCacheMap上。
+    response-cache-update-interval-ms: 30000
