@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: eureka-server-zone-1
+server:
+  port: 30001
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    prefer-ip-address: true
+    status-page-url-path: /actuator/info
+    health-check-url-path: /actuator/health
+    hostname: localhost
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    # false：按照service-url下的 list取第一个注册中心来注册，并和其维持心跳检测，如果失败则依次向其他中心注册，总共重试3次，如果全部失败，每隔1个心跳再次尝试。
+    # true：先通过region取availability-zones内的第一个zone，然后通过这个zone取service-url下的list，并向list内的第一个注册中心进行注册和维持心跳，如果失败则依次向其他中心注册，总共重试3次，如果全部失败，每隔1个心跳再次尝试
+    prefer-same-zone-eureka: true
+    # 地区
+    region: beijing
+    availability-zones:
+      # 注意zone顺序：本server优先注册到zone1
+      beijing: zone-1,zone-2
+    service-url:
+      zone-1: http://localhost:30001/eureka/
+      zone-2: http://localhost:30002/eureka/
