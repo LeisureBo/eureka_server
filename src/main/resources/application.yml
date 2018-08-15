@@ -1,6 +1,6 @@
 spring:
   profiles:
     active:
-    - zone1
+    - standalone
   application:
     name: eureka-server
